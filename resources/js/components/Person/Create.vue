@@ -1,50 +1,35 @@
 <template>
     <div class="w-25">
         <div class="mb-3">
-            <input type="text" v-model="name" placeholder="Name" class="form-control">
+            <input type="text" v-model="person.name" placeholder="Name" class="form-control">
         </div>
         <div class="mb-3">
-            <input type="number" v-model="age" placeholder="Age" class="form-control">
+            <input type="number" v-model="person.age" placeholder="Age" class="form-control">
         </div>
         <div class="mb-3">
-            <input type="text" v-model="job" placeholder="Job" class="form-control">
+            <input type="text" v-model="person.job" placeholder="Job" class="form-control">
         </div>
         <div class="mb-3">
-            <input :disabled="!isDisabled" @click.prevent="store" type="submit" value="Add" class="btn btn-success">
+            <input :disabled="!isDisabled" @click.prevent="$store.dispatch('store', {name: person.name, age: person.age, job: person.job})" type="submit" value="Add" class="btn btn-success">
         </div>
     </div>
 </template>
 
 <script>
+    import {mapGetters} from "vuex";
+
     export default {
         name: "Create",
 
-        data() {
-            return {
-                name: null,
-                age: null,
-                job: null,
-            }
-        },
-
-        methods: {
-            store() {
-                axios.post('/api/people', {
-                    name: this.name,
-                    age: this.age,
-                    job: this.job
-                })
-                .then( res => {
-                    this.$router.push({ name: 'person.index' })
-                })
-            },
-
+        mounted() {
+            this.$store.commit('setPerson', {name: null, age: null, job: null})
         },
 
         computed: {
-            isDisabled() {
-                return this.name && this.age && this.job
-            }
+            ...mapGetters({
+                isDisabled: "isDisabled",
+                person: "person",
+            })
         }
     }
 </script>
